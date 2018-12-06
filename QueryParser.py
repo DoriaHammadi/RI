@@ -1,8 +1,10 @@
 from Document import Document
+import numpy as np
 import porter
 import TextRepresenter
 from Parser import Parser
 import pickle
+from functools import reduce
 
 class Query():
     def __init__(self, id, text, revelant, porter): #, pertinance, sousclasse):
@@ -21,6 +23,11 @@ class Query():
     def get_revelant(self): return self.revelant
     def get_query(self): return self.query
     
+    def getSubthemesCount(self):
+        with open('index/sousTemes.pkl', 'rb') as f:
+            list_ = list(pickle.load(f).values())
+            return len(set(reduce(lambda x,y: x+y,list_)))
+    
 class QueryParser(Parser):
     
     def __init__(self, porter):
@@ -36,6 +43,7 @@ class QueryParser(Parser):
         self.rel = rel
 
     def nextQuery(self):
+        nbre_themes = dict()
                 
         qry = self.nextDocument()
         rel = []
@@ -49,7 +57,14 @@ class QueryParser(Parser):
 
         while(line):
             l = line.split(' ')
+                
             try :
+                if (int(l[0])):
+                    if (int(l[0]) not in nbre_themes.keys()):
+                        nbre_themes[int(l[0])] = [int(l[3])]
+                    else:
+                        nbre_themes[int(l[0])].append(int(l[3]))
+                        
                 if (int(l[0]) == int(qry.getId())) :
                     rel.append((l[1],(int(l[2]),int(l[3]))))
             except  ValueError:
@@ -58,6 +73,8 @@ class QueryParser(Parser):
             line = line.replace('  ',' ')
 
         res = Query(qry.getId(),qry.getText(),rel, self.porter)
+        with open('index/sousTemes.pkl', 'wb') as f:
+            pickle.dump(nbre_themes, f, pickle.HIGHEST_PROTOCOL)
 
         return res
     def getDocument(self, text):

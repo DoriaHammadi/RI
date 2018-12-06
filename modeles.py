@@ -33,7 +33,6 @@ class Vectoriel(IRmodel) :
         
         dico = dict()
         query = self.weighter.getWeightsForQuery(_query)
-        print(query.keys())
         for w in query.keys() :
             docs = self.weighter.getDocWeightsForStem(w)
             for d in docs.keys() :
@@ -135,7 +134,7 @@ class ModelBM25(IRmodel):
                                     (self.k1 * ((1 - self.b) +
                                                 self.b *
                                                 float(lengthDocs[doc]) /
-                                                np.mean(lengthDocs.values())) +
+                                                np.mean(list(lengthDocs.values()))) +
                                                stems[t]))
                 if (doc in scores.keys()):
                     scores[doc] += fdq 

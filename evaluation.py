@@ -12,20 +12,18 @@ class EvalMeasure:
     def Evaluation_queries(self):
         l = []
         for query in self.queries:
-            print('boucle')
             irlist = IRList(query, self.model)
             #print(irlist)
-            evaluation = self.Eval(irlist)
+            evaluation = self.evaluation(irlist)
             l.append(evaluation)
-        df = pd.DataFrame(l)
             
-        return df.mean()
-    
-    def precesion(self):
+        return np.mean(l)  
+    def precision(self):
         l = []
         for query in self.queries:
             irlist = IRList(query, self.model)
-            evaluation = self.precesion_(irlist)
+            
+            evaluation = self.precision_(irlist)
             l.append(evaluation)
         df = pd.DataFrame(l)
             
@@ -40,6 +38,39 @@ class EvalMeasure:
         df = pd.DataFrame(l)
             
         return df.mean()
+
+    def precision_(self, irlist):
+        docs = irlist.getRanking()
+        revelants = irlist.getQuery().get_revelant() 
+        
+        pertRet = [ tuple_[0] for tuple_ in revelants]
+        precision = []
+        tp = 0.0
+        i = 0
+        while i < len(docs) and tp < len(pertRet):
+            (doc, score) = docs[i]
+            if doc in pertRet:
+                tp += 1
+                precision.append( tp / (i + 1))
+            i += 1
+        return precision
+    
+    def rappel_(self, irlist):
+        docs = irlist.getRanking()
+
+        revelants = irlist.getQuery().get_revelant() 
+        pertRet = [ tuple_[0] for tuple_ in revelants]
+        rappel = []
+        tp = 0.0
+        i = 0
+        while i < len(docs) and tp < len(pertRet):
+            (doc, score) = docs[i]
+            if doc in pertRet:
+                tp += 1
+                rappel.append( tp / len(pertRet) )
+            i += 1
+        return rappel 
+    
     
 class Pn(EvalMeasure):
     
@@ -67,39 +98,34 @@ class Pn(EvalMeasure):
         for doc in docs :
             if (doc in pertRet) :
                 nbPertRet += 1
-        print(nbPertRet)       
         return nbPertRet / float(self.n)  
     
 class CRn(EvalMeasure):
     
-    def __init__(self, model, queries, n):
-        
+    def __init__(self, model, queries, n):        
         '''
         model : Model
         queries : list of query
         n : Int
         return P@n
-        '''
-        
+        '''       
         super().__init__(model, queries)
         self.n = n
     
     def evaluation(self, irlist):
-        # calculer le nombre de sous themes total !!!!!
+        
+        nbrSousThemes = irlist.getQuery().getSubthemesCount()
         docsRanking = irlist.getRanking()[: self.n]
         docs = [tuple_[0] for tuple_ in docsRanking]
         revelants = irlist.getQuery().get_revelant()
         dic = {tuple_[0]: tuple_[1][1] for tuple_ in revelants}       
-        subTerms = []
+        subThemes = []
         
         for doc in docs :
             if (doc in dic.keys()) :
-                subTerms.append(dic[doc])
-                
-        print(subTerms)   
-        
-        return len(set(subTerms)) 
-        #return len(set(subTerms)) / float(nb)
+                subThemes.append(dic[doc])
+                        
+        return len(set(subThemes)) / float(nbrSousThemes)
         
 
     
