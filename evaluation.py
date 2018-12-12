@@ -114,10 +114,13 @@ class CRn(EvalMeasure):
     
     def evaluation(self, irlist):
         
-        nbrSousThemes = irlist.getQuery().getSubthemesCount()
-        docsRanking = irlist.getRanking()[: self.n]
-        docs = [tuple_[0] for tuple_ in docsRanking]
+        #nbrSousThemes = irlist.getQuery().getSubthemesCount()
+        docsRanking_n = irlist.getRanking()[: self.n]
+        docs = [tuple_[0] for tuple_ in docsRanking_n]
         revelants = irlist.getQuery().get_revelant()
+        sousThemes = [tuple_[1][1] for tuple_ in revelants]
+        #print(sousThemes)
+        nbrSousThemes = len(set(sousThemes))
         dic = {tuple_[0]: tuple_[1][1] for tuple_ in revelants}       
         subThemes = []
         
