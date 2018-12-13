@@ -18,7 +18,7 @@ class IRmodel:
         docs = self.index.getListDocs()
         
         docs_scoresZero = { key : docsNull for key in set(docs).difference(scores.keys())}
-        return dict(scores_sorted + list(docs_scoresZero.items()))
+        return (scores_sorted + list(docs_scoresZero.items()))
        
     
 class Vectoriel(IRmodel) :
