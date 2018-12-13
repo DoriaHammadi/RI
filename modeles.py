@@ -11,7 +11,7 @@ class IRmodel:
     def getScores(self, query):
         pass
 
-    def getRanking(self, query, docsNull):
+    def getRanking(self, query, docsNull = 0):
         
         scores = self.getScores(query)
         scores_sorted = sorted(scores.items(), key=operator.itemgetter(1), reverse=True)

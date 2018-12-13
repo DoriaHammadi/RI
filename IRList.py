@@ -12,6 +12,11 @@ class IRList():
         return self.query
     
     def getRanking(self): 
+        res = self.model.getRanking(self.query.get_query())
         
-        res = self.model.getRanking(self.query.get_query(), 0.001)
-        return list(res.items())
+        if (type(res[0] == str)):
+            docs = res
+        else :
+            docs = [tuple_[0] for tuple_ in res.items()]
+            
+        return res

@@ -88,8 +88,9 @@ class Pn(EvalMeasure):
     
     def evaluation(self, irlist):
         
-        docsRanking = irlist.getRanking()[: self.n]
-        docs = [tuple_[0] for tuple_ in docsRanking]
+        docs = irlist.getRanking()[: self.n]
+
+            
         revelants = irlist.getQuery().get_revelant()
         pertRet = [ tuple_[0] for tuple_ in revelants]
         
@@ -113,10 +114,15 @@ class CRn(EvalMeasure):
         self.n = n
     
     def evaluation(self, irlist):
+        """
+        resulution de tous les parametres 
+        """
         
         #nbrSousThemes = irlist.getQuery().getSubthemesCount()
-        docsRanking_n = irlist.getRanking()[: self.n]
-        docs = [tuple_[0] for tuple_ in docsRanking_n]
+        docs = irlist.getRanking()[: self.n]
+        
+        #docs = [tuple_[0] for tuple_ in docsRanking_n]
+            
         revelants = irlist.getQuery().get_revelant()
         sousThemes = [tuple_[1][1] for tuple_ in revelants]
         #print(sousThemes)
