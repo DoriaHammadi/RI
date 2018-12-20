@@ -17,5 +17,4 @@ class IRList():
             docs = res
         else :
             docs = [tuple_[0] for tuple_ in res]
-            
-        return res
+        return docs
