@@ -89,9 +89,10 @@ class Pn(EvalMeasure):
     def evaluation(self, irlist):
         
         docs = irlist.getRanking()[: self.n]
-
+        #print("evaluation", docs)
             
         revelants = irlist.getQuery().get_revelant()
+        #print(" text of query:::::",irlist.getQuery().get_text())
         pertRet = [ tuple_[0] for tuple_ in revelants]
         
         nbPertRet = 0
@@ -120,7 +121,7 @@ class CRn(EvalMeasure):
         
         #nbrSousThemes = irlist.getQuery().getSubthemesCount()
         docs = irlist.getRanking()[: self.n]
-        
+        #print("docs", docs)
         #docs = [tuple_[0] for tuple_ in docsRanking_n]
             
         revelants = irlist.getQuery().get_revelant()
@@ -133,7 +134,14 @@ class CRn(EvalMeasure):
         for doc in docs :
             if (doc in dic.keys()) :
                 subThemes.append(dic[doc])
-                        
+                #print("in boucle", doc)
+        """        
+        print("subThemes", subThemes) 
+        print("###docs", docs)
+        print("documents in requette", dic.keys())
+        print("sousThemes", set(sousThemes))
+        print("########################result", len(set(subThemes)) / float(nbrSousThemes)) 
+        """
         return len(set(subThemes)) / float(nbrSousThemes)
         
 
