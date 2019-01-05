@@ -23,7 +23,7 @@ def GetBest(l_keys):
     return
 class GloutonModel(ModelDiversity):
 
-    def __init__(self, index, model , orderGlouton = '', orderDocs = '', nbrDocs = 100):
+    def __init__(self, index, model , orderGlouton = '', orderDocs = '', nbrDocs = 100, alpha = 0.9):
 
         """
         model : IRModel
@@ -32,7 +32,7 @@ class GloutonModel(ModelDiversity):
         orderDocs : Order des documents { rang, similarité docs}
         nbrDocs : numbre de documents a retourner
         """
-
+        self.alpha = alpha
         self.index = index
         self.model = model
         self.nbrDocs = nbrDocs
@@ -46,18 +46,19 @@ class GloutonModel(ModelDiversity):
                 res+=1
         return res
 
-    def getBest(self,l_keys, query, docs_representation, alpha = 0.9):
-        tmp_l = copy.deepcopy(l_keys)
+    def getBest(self,l_keys, query, docs_representation, rank, alpha = 0.1):
         valmax = None
         res = None
         for du in l_keys :
-            tmp_l_keys = copy.deepcopy(l_keys)
-            tmp_l_keys.remove(du)
+            tmp_l_keys = copy.deepcopy(rank)
             sim1 = self.getSim1(docs_representation[du], query)
             l_sim2 = []
-            for di in tmp_l_keys :
+            for di in rank:
                 l_sim2.append(self.getSim1(docs_representation[du], docs_representation[di]))
-            sim2 = max(l_sim2)
+            if not l_sim2:
+                sim2 = 0
+            else :
+                sim2 = max(l_sim2)
             val  = alpha*sim1 - (1 - alpha)*sim2
             if (valmax == None) or (valmax < val):
                 valmax = val
@@ -79,7 +80,7 @@ class GloutonModel(ModelDiversity):
         l_keys = list(docs_representation.keys())
         rank = []
         while(len(l_keys) > 1):
-            a = self.getBest(l_keys,query, docs_representation)
+            a = self.getBest(l_keys,query, docs_representation,rank, self.alpha)
             rank.append(a)
             l_keys.remove(a)
         rank.append(l_keys[0])
